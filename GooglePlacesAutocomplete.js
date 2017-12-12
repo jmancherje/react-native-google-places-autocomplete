@@ -199,6 +199,7 @@ export default class GooglePlacesAutocomplete extends Component {
           };
 
           this._disableRowLoaders();
+
           this.props.onPress(currentLocation, currentLocation);
         } else {
           this._requestNearby(position.coords.latitude, position.coords.longitude);
@@ -239,11 +240,13 @@ export default class GooglePlacesAutocomplete extends Component {
             if (this._isMounted === true) {
               const details = responseJSON.result;
               this._disableRowLoaders();
-              this._onBlur();
+              // this._onBlur();
 
-              this.setState({
-                text: this._renderDescription( rowData ),
-              });
+              // let nextText = this._renderDescription( rowData );
+              this.setState({ text: '' });
+              if (!this.props.shouldClearAndFocus) {
+                this._onBlur();
+              }
 
               delete rowData.isLoading;
               this.props.onPress(rowData, details);
@@ -310,6 +313,7 @@ export default class GooglePlacesAutocomplete extends Component {
       let predefinedPlace = this._getPredefinedPlace(rowData);
 
       // sending predefinedPlace as details for predefined places
+
       this.props.onPress(predefinedPlace, predefinedPlace);
     }
   }
@@ -592,7 +596,8 @@ export default class GooglePlacesAutocomplete extends Component {
     this.triggerBlur();
 
     this.setState({
-      listViewDisplayed: false
+      listViewDisplayed: false,
+      text: '',
     });
   }
 
@@ -743,7 +748,8 @@ GooglePlacesAutocomplete.propTypes = {
   debounce: PropTypes.number,
   isRowScrollable: PropTypes.bool,
   text: PropTypes.string,
-  textInputHide: PropTypes.bool
+  textInputHide: PropTypes.bool,
+  shouldClearAndFocus: PropTypes.bool,
 }
 GooglePlacesAutocomplete.defaultProps = {
   placeholder: 'Search',
@@ -785,7 +791,8 @@ GooglePlacesAutocomplete.defaultProps = {
   enableEmptySections: true,
   listViewDisplayed: 'auto',
   debounce: 0,
-  textInputHide: false
+  textInputHide: false,
+  shouldClearAndFocus: false
 }
 
 // this function is still present in the library to be retrocompatible with version < 1.1.0
